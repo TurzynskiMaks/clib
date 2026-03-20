@@ -14,13 +14,18 @@ $(TARGET_DLL): $(SRCS)
 
 # 2. Cel RELEASE: Buduje, przełącza branche i kopiuje pliki
 release: all
-	@echo "Rozpoczynam proces release..."
+	@echo "Zapisywanie binariów na branchu dsa..."
+	git add -f $(TARGET_DLL) $(LIB_OUT) $(HEADERS) $(SRCS)
+	git commit -m "Build do release" || echo "Brak nowych zmian"
+	
+	@echo "Przełączanie na main i kopiowanie..."
 	git checkout main
-	git checkout DSA -- $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
-	git add $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
-	git commit -m "Automatyczny build release: $(shell date)"
+	# Pobieramy pliki bezpośrednio z gałęzi dsa bez przełączania wszystkiego
+	git restore --source=DSA $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
+	
+	git add .
+	git commit -m "Release build: $(shell date)"
 	git checkout DSA
-	@echo "Gotowe! Pliki binarne są na branchu main, a Ty wróciłeś na dev."
 
 # 3. Czyszczenie
 clean:
