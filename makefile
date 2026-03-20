@@ -15,12 +15,22 @@ $(TARGET_DLL): $(SRCS)
 # 2. Cel RELEASE: Buduje, przełącza branche i kopiuje pliki
 release: all
 	@echo "Rozpoczynam proces release..."
+	# 1. Najpierw dodajemy pliki na obecnym branchu (dsa)
+	git add -f $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
+	git commit -m "Automatyczny build: $(shell date)" || echo "Brak zmian do commitowania"
+	
+	# 2. Przełączamy się na main
 	git checkout main
+	
+	# 3. Wyciągamy pliki z brancha dsa
 	git checkout dsa -- $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
-	git add $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
-	git commit -m "Automatyczny build release: $(shell date)"
+	
+	# 4. Finalizujemy na main
+	git add .
+	git commit -m "Release: $(shell date)"
+	
+	# 5. Powrót
 	git checkout dsa
-	@echo "Gotowe! Pliki binarne są na branchu main, a Ty wróciłeś na dev."
 
 # 3. Czyszczenie
 clean:
