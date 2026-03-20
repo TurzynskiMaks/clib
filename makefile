@@ -10,7 +10,7 @@ HEADERS = dsa.h # Twoje pliki .h
 all: $(TARGET_DLL)
 
 $(TARGET_DLL): $(SRCS)
-	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET_DLL) -Wl,--out-implib,$(LIB_OUT)
+	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET_DLL) -Wl,--out-implib,./$(LIB_OUT)
 
 # 2. Cel RELEASE: Buduje, przełącza branche i kopiuje pliki
 release: all
