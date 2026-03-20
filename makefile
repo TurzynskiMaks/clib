@@ -1,31 +1,27 @@
-# Nazwa Twojej biblioteki z rozszerzeniem .dll
-NAME = libdsa.dll
-
-# Kompilator
+# Zmienne
 CC = gcc
-# Flaga -fPIC jest ważna dla kodu współdzielonego (Position Independent Code)
-CFLAGS = -Wall -Wextra -O2 -fPIC
+CFLAGS = -Wall -shared
+TARGET_DLL = libdsa.dll
+LIB_OUT = libdsa.dll.a
+SRCS = dsa.c  # Twoje pliki .c
+HEADERS = dsa.h # Twoje pliki .h
 
-SRCS = dsa.c
-OBJS = $(SRCS:.c=.o)
+# 1. Cel domyślny: Po prostu buduje DLL w obecnym folderze
+all: $(TARGET_DLL)
 
-all: $(NAME)
+$(TARGET_DLL): $(SRCS)
+	$(CC) $(CFLAGS) $(SRCS) -o $(TARGET_DLL) -Wl,--out-implib,$(LIB_OUT)
 
-# Tworzenie pliku .dll
-$(NAME): $(OBJS)
-	$(CC) -shared -o $(NAME) $(OBJS) -Wl,--out-implib,lib$(NAME).a
-	@echo "Biblioteka DLL została utworzona!"
+# 2. Cel RELEASE: Buduje, przełącza branche i kopiuje pliki
+release: all
+	@echo "Rozpoczynam proces release..."
+	git checkout main
+	git checkout dsa -- $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
+	git add $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
+	git commit -m "Automatyczny build release: $(shell date)"
+	git checkout dsa
+	@echo "Gotowe! Pliki binarne są na branchu main, a Ty wróciłeś na dev."
 
-# Kompilacja plików .c do .o
-%.o: %.c
-	$(CC) $(CFLAGS) -c $< -o $@
-
+# 3. Czyszczenie
 clean:
-	rm -f $(OBJS)
-
-fclean: clean
-	rm -f $(NAME) lib$(NAME).a
-
-re: fclean all
-
-.PHONY: all clean fclean re
+	rm -f *.dll *.dll.a
