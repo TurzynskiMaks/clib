@@ -23,14 +23,14 @@ release: all
 	git checkout main
 	
 	# 3. Wyciągamy pliki z brancha dsa
-	git checkout dsa -- $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
+	git checkout DSA -- $(TARGET_DLL) $(LIB_OUT) $(HEADERS)
 	
 	# 4. Finalizujemy na main
 	git add .
 	git commit -m "Release: $(shell date)"
 	
 	# 5. Powrót
-	git checkout dsa
+	git checkout DSA
 
 # 3. Czyszczenie
 clean:
